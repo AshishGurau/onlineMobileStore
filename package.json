@@ -1,0 +1,20 @@
+{
+  "name": "mobilestore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "sass ./static/sass/style.scss style.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AshishGurau/onlineMobileStore.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshishGurau/onlineMobileStore/issues"
+  },
+  "homepage": "https://github.com/AshishGurau/onlineMobileStore#readme"
+}
