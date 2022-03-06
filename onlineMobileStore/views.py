@@ -1,16 +1,23 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from matplotlib.style import context
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout as logoutUser
+from onlineMobileStore.models import Sale
 
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html');
+    topSale = Sale.objects.all()
+    context = {'topSale': topSale}
+
+    return render(request, 'index.html', context);
 
 def cart(request):
     return render(request, 'cart.html');
+
+def onSale(request):
+    return render(request, 'onSale.html');
 
 def product(request):
     return render(request, 'product.html');
@@ -64,3 +71,4 @@ def logout(request):
     logoutUser(request)
     messages.success(request, "Successfully Logged Out")
     return redirect('home')
+
