@@ -3,15 +3,39 @@ from matplotlib.style import context
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout as logoutUser
-from onlineMobileStore.models import Sale
+from onlineMobileStore.models import Sale, SpecialPrice
+from .forms import SaleForm
 
 
 # Create your views here.
+def addProduct(request):
+    if request.method == "POST":
+        
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+
+        prod = SpecialPrice(
+            
+            p_name = name,
+            price = price
+        )
+
+        prod.save()
+        #return redirect('home')
+    return render(request, 'productcrud.html', context)
+
+
 def index(request):
     topSale = Sale.objects.all()
     context = {'topSale': topSale}
 
     return render(request, 'index.html', context);
+
+def productcrud(request):
+    return render(request, 'productcrud.html');
+
+def addproduct(request):
+    return render(request, 'add.html');
 
 def cart(request):
     return render(request, 'cart.html');

@@ -12,7 +12,7 @@ class Sale(models.Model):
         return self.p_name
 
 class SpecialPrice(models.Model):
-    image = models.ImageField(null=True, blank=True)
+    
     p_name = models.CharField(max_length=30)
     price = models.IntegerField()
 

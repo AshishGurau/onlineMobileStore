@@ -9,5 +9,7 @@ urlpatterns = [
     path("login", views.handleLogin, name='login'),
     path("register", views.register, name='register'),
     path("logout", views.logout, name='logout'),
-    path("onsale", views.onSale, name='onsale')
+    path("onsale", views.onSale, name='onsale'),
+    path("productcrud", views.productcrud, name='productcrud'),
+    path("addproduct", views.addproduct, name='addproduct'),
 ]
