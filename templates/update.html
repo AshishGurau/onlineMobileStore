@@ -1,0 +1,40 @@
+{% extends 'productcrud.html' %}
+
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="fw-bold">Edit Product</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {% if prod.image %}
+                                        <img src="{{ prod.image.url }}" alt="image here" width="50" height="33">
+                                    {% endif %}
+                                    <label for="" class="form-label">Image</label>
+                                    <input type="file" name="image" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Name</label>
+                                    <input type="text" Required name="name" value="{{ prod.p_name }}" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Price</label>
+                                    <input type="text" Required name="price" value="{{ prod.price }}" class="form-control">
+                                </div>
+                                
+                                <button type="submit" class="btn btn-warning">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+{% endblock body %}

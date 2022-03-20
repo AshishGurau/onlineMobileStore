@@ -4,26 +4,14 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout as logoutUser
 from onlineMobileStore.models import Sale, SpecialPrice
-from .forms import SaleForm
+from django.core.mail import send_mail
 
 
 # Create your views here.
 def addProduct(request):
-    if request.method == "POST":
-        
-        name = request.POST.get('name')
-        price = request.POST.get('price')
-
-        prod = SpecialPrice(
-            
-            p_name = name,
-            price = price
-        )
-
-        prod.save()
+    
         #return redirect('home')
-    return render(request, 'productcrud.html', context)
-
+    return render(request, 'add.html')
 
 def index(request):
     topSale = Sale.objects.all()
@@ -31,14 +19,54 @@ def index(request):
 
     return render(request, 'index.html', context);
 
-def productcrud(request):
-    return render(request, 'productcrud.html');
 
-def addproduct(request):
-    return render(request, 'add.html');
+def editProduct(request, pk):
+    prod = Sale.objects.get(id=pk)
+
+    if request.method == "POST":
+        if len(request.FILES) != 0:
+            prod.image = request.FILES['image']
+        prod.p_name = request.POST.get('name')
+        prod.price = request.POST.get('price')
+        prod.save()
+        
+        return redirect('view')
+
+    context = {'prod':prod}
+    return render(request, 'update.html', context)
+
+def deleteProduct(request, pk):
+    prod = Sale.objects.get(id=pk)
+    
+    prod.delete()
+    
+    return redirect('view')
 
 def cart(request):
     return render(request, 'cart.html');
+
+def view(request):
+    if request.method == "POST":
+
+        
+        image = request.FILES['image']
+    
+        name = request.POST['name']
+        price = request.POST['price']
+        
+        prod = Sale(
+            image = image,
+            p_name = name,
+            price = price
+        )
+
+        
+        prod.save()
+        return redirect('view')
+    topSale = Sale.objects.all()
+    context = {'topSale': topSale}
+
+    return render(request, 'view.html', context)
 
 def onSale(request):
     return render(request, 'onSale.html');
@@ -87,6 +115,11 @@ def register(request):
         myUser = User.objects.create_user(uname, email, pass1)
         myUser.first_name = uname
         myUser.save()
+
+        subject = "Thanks for Register"
+        message = "Hey " + uname + " You are now successfully register with us and your password is secure"
+        to = email
+        send_mail(subject, message, 'no-reply@onlinestore.com', [to])
         messages.success(request, "Your account has been successfully created")
         return redirect('login')
     return render(request, 'register.html')

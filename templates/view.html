@@ -1,0 +1,38 @@
+{% extends 'productcrud.html' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Image</th>
+                <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in  topSale %}
+                <tr>
+                    <td>{{p.id}}</td>
+                    <td>{{p.p_name}}</td>
+                    <td>{{p.price}}</td>
+                    <td><img src={{p.image.url}} class="prod-size" alt="" width="50" height="33"></td>
+                    <td>
+                        <a href="{% url 'edit-prod' p.id %}" class="btn btn-success badge">EDIT</a>
+                        <a href="{% url 'delete-prod' p.id %}" class="btn btn-danger badge">Delete</a>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+{% endblock body %}
+
