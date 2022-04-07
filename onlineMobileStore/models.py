@@ -1,6 +1,8 @@
+from contextlib import nullcontext
 from unicodedata import category, name
 from django.contrib.auth.models import User
 from django.db import models
+from matplotlib.pyplot import cla
 from pyrsistent import b
 
 
@@ -8,14 +10,6 @@ from pyrsistent import b
 class Category(models.Model):
     slug = models.CharField(max_length=150, null=False, blank=False)
     name = models.CharField(max_length=150, null=False, blank=False)
-    image = models.ImageField(null=True, blank=True)
-    description = models.TextField(max_length=1000, null=False, blank=False)
-    status = models.BooleanField(default=False, help_text="0=default, 1=Hidden")
-    trending = models.BooleanField(default=False, help_text="0=default, 1=Trending")
-    meta_title = models.CharField(max_length=150, null=False, blank=False)
-    meta_keywords = models.CharField(max_length=150, null=False, blank=False)
-    meta_description = models.TextField(max_length=500, null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -24,7 +18,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     slug = models.CharField(max_length=150, null=False, blank=False)
     name = models.CharField(max_length=150, null=False, blank=False)
-    product_image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     small_description = models.CharField(max_length=250, null=False, blank=False)
     quantity = models.IntegerField(null=False, blank=False)
     description = models.TextField(max_length=500, null=False, blank=False)
@@ -33,14 +27,16 @@ class Product(models.Model):
     status = models.BooleanField(default=False, help_text="0=default, 1=Hidden")
     trending = models.BooleanField(default=False, help_text="0=default, 1=Trending")
     tag = models.CharField(max_length=150, null=False, blank=False)
-    meta_title = models.CharField(max_length=150, null=False, blank=False)
-
-    meta_keywords = models.CharField(max_length=150, null=False, blank=False)
-    meta_description = models.TextField(max_length=500, null=False, blank=False)
+   
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def get_photo_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
 
 class Sale(models.Model):
     image = models.ImageField(null=True, blank=True)
@@ -116,3 +112,33 @@ class NewPhone(models.Model):
 
     def __str__(self):
         return self.p_name
+
+class Specification(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    general = models.CharField(max_length=200, null=False, blank=False)
+    displayType = models.CharField(max_length=200, null=False, blank=False)
+    memory = models.CharField(max_length=200, null=False, blank=False)
+    wlan = models.CharField(max_length=200, null=False, blank=False)
+    usb = models.CharField(max_length=200, null=False, blank=False)
+    cameraPrimary = models.CharField(max_length=200, null=False, blank=False)
+    cameraVideo = models.CharField(max_length=200, null=False, blank=False)
+    cameraSecondary = models.CharField(max_length=200, null=False, blank=False)
+    os = models.CharField(max_length=200, null=False, blank=False)
+    chipset = models.CharField(max_length=200, null=False, blank=False)
+    cpu = models.CharField(max_length=200, null=False, blank=False)
+    battery = models.CharField(max_length=200, null=False, blank=False)
+
+    def __str__(self):
+        return self.product.name
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_qty = models.IntegerField(null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def getCart_items(self):
+        items = self.cart_set.all()
+        total = sum([item.product_qty for item in items])
+        return total

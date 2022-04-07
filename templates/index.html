@@ -26,28 +26,25 @@
         <hr>
         <!-- owl carousel -->
         
-          <div class="owl-carousel owl-theme">
+          {% comment %} <div class="owl-carousel owl-theme"> {% endcomment %}
             
          
             
-            {% for t in topSale %}
+            {% for prod in topSale %}
             <div class="item py-2">
-              <div class="product font-rale">
+              <div class="product product_data font-rale">
                 <div class="d-flex flex-column">
-                  <a href="#"><img src="{{t.image.url}}" class="img-fluid" alt="pro1"></a>
+                  <a href="{%url 'product-detail' prod.slug%}"><img src="{{prod.get_photo_url}}" alt="pro1" height="280px" width="100px"></a>
                   <div class="text-center">
-                    <h6>{{t.p_name}}</h6>
-                    <div class="rating text-warning font-size-12">
-                      <span><i class="fas fa-star"></i></span>
-                      <span><i class="fas fa-star"></i></span>
-                      <span><i class="fas fa-star"></i></span>
-                      <span><i class="fas fa-star"></i></span>
-                      <span><i class="far fa-star"></i></span>
-                    </div>
+                    <h6>{{prod.name}}</h6>
+                    
                     <div class="price py-2">
-                      <span>${{t.price}}</span>
+                      <span>${{prod.selling_price}}</span>
                     </div>
-                    <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-warning font-size-12 update-cart">Add to Cart</button>
+                    {% csrf_token %}
+                    <input type="hidden" value="{{prod.id}}" class="prod_id">
+                    <button value="1" type="submit" class="btn btn-primary font-size-12 addToCart qty-input">Add to Cart<i class="fas fa-shopping-cart"></i></button>
+                    <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-success font-size-12 update-cart">Whislist<i class="fa fa-heart" aria-hidden="true"></i></button>
                   </div>
                 </div>
               </div>
