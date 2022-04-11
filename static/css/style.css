@@ -6,6 +6,9 @@ button, button:focus {
   box-shadow: none !important;
 }
 
+section{
+  padding: 2rem 9%;
+}
 /* typography classes */
 .font-baloo {
   font-family: "Baloo Thambi 2", cursive;
@@ -101,5 +104,29 @@ button, button:focus {
 }
 
 /*# sourceMappingURL=style.css.map */
+.checkoutform label{
+  font-size: 14px !important;
+  font-weight: 600;
+}
 
+.checkoutform input{
+  font-size: 14px !important;
+}
+
+.home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url(../images/banner.jpg) no-repeat;
+  background-position: center;
+  background-size: cover;
+  padding-top: 17rem;
+  padding-bottom: 10rem;
+}
+
+.home .content{
+  text-align: center;
+  width: 60rem;
+  color: white;
+}
 

@@ -4,7 +4,7 @@
   <main id="main-site">
 
     <!-- Owl-carousel -->
-      <section id="banner-area">
+     <!-- <section id="banner-area">
         <div class="owl-carousel owl-theme">
             <div class="item">
               <img src="../static/images/Banner1.png" alt="Banner1">
@@ -16,40 +16,54 @@
               <img src="../static/images/Banner1.png" alt="Banner3">
             </div>
         </div>
-      </section>
+      </section>  -->
     <!-- !Owl-carousel -->
+      <section class="home" id="home">
+        <div class="content">
+          <h3>OnePlus 10 Pro Capture Every Horizon</h3>
+          <p>Experience the new generation triple-camera setup co-developed with OnePlus and Hasselblad. Empowered by a customized IMX789 sensor, enhanced noise reduction and higher dynamic range, capture images and your imagination.</p>
+          <a href="#" class="btn btn-light">Shop now</a>
+        </div> 
+      </section>
 
     <!-- Top Sale -->
     <section id="top-sale">
-      <div class="container py-5">
+      <div class="container">
         <h4 class="font-rubik font-size-20">Top Sale</h4>
         <hr>
         <!-- owl carousel -->
         
-          {% comment %} <div class="owl-carousel owl-theme"> {% endcomment %}
+          <!-- <div class="owl-carousel owl-theme"> -->
+        <div class="row">
+          {% for prod in topSale %}
+          <div class="col-md-3 mb-4">
             
-         
-            
-            {% for prod in topSale %}
-            <div class="item py-2">
+
+            <div class="border border-white rounded card shadow">
               <div class="product product_data font-rale">
                 <div class="d-flex flex-column">
-                  <a href="{%url 'product-detail' prod.slug%}"><img src="{{prod.get_photo_url}}" alt="pro1" height="280px" width="100px"></a>
+                  <a class="mx-auto mt-4" href="{%url 'product-detail' prod.slug%}"><img src="{{prod.get_photo_url}}" alt="pro1" height="200px" width="120px"></a>
                   <div class="text-center">
-                    <h6>{{prod.name}}</h6>
+                    <h6 class="mt-2 font-weight-bold">{{prod.name}}</h6>
                     
                     <div class="price py-2">
-                      <span>${{prod.selling_price}}</span>
+                      <span>Rs {{prod.selling_price}}</span>
                     </div>
                     {% csrf_token %}
-                    <input type="hidden" value="{{prod.id}}" class="prod_id">
-                    <button value="1" type="submit" class="btn btn-primary font-size-12 addToCart qty-input">Add to Cart<i class="fas fa-shopping-cart"></i></button>
-                    <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-success font-size-12 update-cart">Whislist<i class="fa fa-heart" aria-hidden="true"></i></button>
+                    <input type="hidden" value="{{prod.id}}" name="p_id" class="prod_id">
+                    <button value="1" type="submit" class="btn btn-primary font-size-12 addToCart qty-input mb-4">Add to Cart<i class="fas fa-shopping-cart"></i></button>
+                    <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-success font-size-12 update-cart mb-4">Whislist<i class="fa fa-heart" aria-hidden="true"></i></button>
                   </div>
                 </div>
               </div>
             </div>
-            {% endfor %}
+            
+          </div>
+          {% endfor %}
+        </div>
+         
+            
+            
 
             
           </div>
@@ -58,7 +72,7 @@
       </div>
     </section>
   <!-- !Top Sale -->
-
+    
   <!-- Special Price -->
     <section id="special-price">
       <div class="container">
@@ -306,146 +320,30 @@
 
               <!-- owl carousel -->
               <div class="owl-carousel owl-theme">
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <a href="#"><img src="../static/images/3.png" alt="product1" class="img-fluid"></a>
-                    <div class="text-center">
-                      <h6>Samsung Galaxy 10</h6>
-                      <div class="rating text-warning font-size-12">
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="far fa-star"></i></span>
-                      </div>
-                      <div class="price py-2">
-                        <span>$152</span>
-                      </div>
-                      <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <a href="#"><img src="../static/images/5.png" alt="product1" class="img-fluid"></a>
-                    <div class="text-center">
-                      <h6>Readme Note 7</h6>
-                      <div class="rating text-warning font-size-12">
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="far fa-star"></i></span>
-                      </div>
-                      <div class="price py-2">
-                        <span>$152</span>
-                      </div>
-                      <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <a href="#"><img src="../static/images/8.png" alt="product1" class="img-fluid"></a>
-                    <div class="text-center">
-                      <h6>Readme Note 7</h6>
-                      <div class="rating text-warning font-size-12">
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="far fa-star"></i></span>
-                      </div>
-                      <div class="price py-2">
-                        <span>$152</span>
-                      </div>
-                      <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <a href="#"><img src="../static/images/1.png" alt="product1" class="img-fluid"></a>
-                    <div class="text-center">
-                      <h6>Samsung Galaxy 10</h6>
-                      <div class="rating text-warning font-size-12">
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="far fa-star"></i></span>
-                      </div>
-                      <div class="price py-2">
-                        <span>$152</span>
-                      </div>
-                      <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <a href="#"><img src="../static/images/10.png" alt="product1" class="img-fluid"></a>
-                    <div class="text-center">
-                      <h6>Readme Note 7</h6>
-                      <div class="rating text-warning font-size-12">
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="fas fa-star"></i></span>
-                        <span><i class="far fa-star"></i></span>
-                      </div>
-                      <div class="price py-2">
-                        <span>$152</span>
-                      </div>
-                      <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                    </div>
-                  </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <div class="d-flex flex-column">
-                      <a href="#"><img src="../static/images/1.png" class="img-fluid" alt="pro1"></a>
+                {% for item in topSale %}
+                  <div class="item py-2 bg-light">
+                    <div class="product font-rale">
+                      <a href="{%url 'product-detail' item.slug%}"><img src="{{item.get_photo_url}}" alt="pro1" height="250px" width="80px"></a>
                       <div class="text-center">
-                        <h6>Readme Note 7</h6>
-                        <div class="rating text-warning font-size-12">
+                        <h6>{{item.name}}</h6>
+                        {% comment %} <div class="rating text-warning font-size-12">
                           <span><i class="fas fa-star"></i></span>
                           <span><i class="fas fa-star"></i></span>
                           <span><i class="fas fa-star"></i></span>
                           <span><i class="fas fa-star"></i></span>
                           <span><i class="far fa-star"></i></span>
-                        </div>
+                        </div> {% endcomment %}
                         <div class="price py-2">
-                          <span>$122</span>
+                          <span>Rs {{item.selling_price}}</span>
                         </div>
-                        <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
+                        <button type="submit" class="btn btn-success font-size-12">Add to Cart</button>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="item py-2 bg-light">
-                  <div class="product font-rale">
-                    <div class="d-flex flex-column">
-                      <a href="#"><img src="../static/images/13.png" class="img-fluid" alt="pro1"></a>
-                      <div class="text-center">
-                        <h6>Readme Note 7</h6>
-                        <div class="rating text-warning font-size-12">
-                          <span><i class="fas fa-star"></i></span>
-                          <span><i class="fas fa-star"></i></span>
-                          <span><i class="fas fa-star"></i></span>
-                          <span><i class="fas fa-star"></i></span>
-                          <span><i class="far fa-star"></i></span>
-                        </div>
-                        <div class="price py-2">
-                          <span>$122</span>
-                        </div>
-                        <button type="submit" class="btn btn-warning font-size-12">Add to Cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {% endfor %}
+                
               </div>
             <!-- !owl carousel -->
-
       </div>
     </section>
     <!-- !New Phones -->

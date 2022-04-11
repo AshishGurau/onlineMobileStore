@@ -1,4 +1,8 @@
 from contextlib import nullcontext
+import email
+from email import message
+from enum import auto
+from operator import mod
 from unicodedata import category, name
 from django.contrib.auth.models import User
 from django.db import models
@@ -55,45 +59,51 @@ class Customer(models.Model):
         return self.name
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
-    date_ordared = models.DateTimeField(auto_now_add=True)
-    complete = models.BooleanField(default=False, null=True, blank=True)
-    transaction_id = models.CharField(max_length=200, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fname = models.CharField(max_length=150, null=False, blank=False)
+    lname = models.CharField(max_length=150, null=False, blank=False)
+    email = models.CharField(max_length=150, null=False)
+    phone = models.CharField(max_length=150, null=False)
+    address = models.TextField(null=False, blank=False, default='Kathmandu')
+    city = models.CharField(max_length=150, null=False)
+    state = models.CharField(max_length=150, null=False)
+    country = models.CharField(max_length=150, null=False)
+    pincode = models.CharField(max_length=150, null=False)
+    total_price = models.FloatField(null=False)
+    payment_mode = models.CharField(max_length=150, null=False)
+    payment_id = models.CharField(max_length=150, null=True)
+    orderStatuses = {
+        ('Pending', 'Pending'),
+        ('Out For Shipping', 'Out For Shipping'),
+        ('Completed', 'Completed')
+    }
+    status = models.CharField(max_length=150, choices=orderStatuses, default='Pending')
+    message = models.TextField(null=True)
+    tracking_no = models.CharField(max_length=150, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.id)
+        return '{} - {}'.format(self.id, self.tracking_no)
     
-    @property
-    def get_cart_total(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
-        return total
-
-    @property
-    def get_cart_items(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.quantity for item in orderitems])
-        return total
 
 class OrderItem(models.Model):
-    product = models.ForeignKey(Sale, on_delete=models.SET_NULL, blank=True, null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
-    quantity = models.IntegerField(default=0, null=True, blank=True)
-    date_added = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    quantity = models.FloatField(null=False)
+    price = models.FloatField(null=True)
 
-    @property
-    def get_total(self):
-        total = self.product.price * self.quantity
-        return total
+    def __self__(self):
+        return '{} - {}'.format(self.order.id, self.order.tracking_no)
 
-class ShippingAddress(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True,  null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
-    address = models.CharField(max_length=200, null=True)
-    date_added = models.DateTimeField(auto_now_add=True)
+# class ShippingAddress(models.Model):
+#     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True,  null=True)
+#     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+#     address = models.CharField(max_length=200, null=True)
+#     date_added = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.address   
+#     def __str__(self):
+#         return self.address   
 
 
 

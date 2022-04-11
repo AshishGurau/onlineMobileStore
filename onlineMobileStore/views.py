@@ -10,6 +10,7 @@ from onlineMobileStore.models import *
 from django.core.mail import send_mail
 
 from django.http import JsonResponse
+import random
 
 
 # Create your views here.
@@ -193,8 +194,7 @@ def searchItem(request):
         query = request.GET.get('query')
         print(query)
         if query:
-            print(Sale.objects.all())
-            products = Sale.objects.filter(p_name__icontains=query) 
+            products = Product.objects.filter(name__icontains=query) 
             print(products)
             return render(request, 'search.html', {'products':products})
         else:
@@ -204,6 +204,7 @@ def searchItem(request):
 def productView(request, prod_slug):
     if(Product.objects.filter(slug=prod_slug, status=0)):
         products = Product.objects.filter(slug=prod_slug, status=0).first
+        
         context = {'products': products}
     else:
         messages.error(request, "No such product found")
@@ -218,11 +219,9 @@ def addToCart(request):
             product_check = Product.objects.get(id=prod_id)
             if(product_check):
                 if(Cart.objects.filter(user=request.user.id, product_id=prod_id)):
-                    print("Hello")
-                    return JsonResponse({'status':'Product Already in cart'})
+                    return JsonResponse({'status':"Product Already in cart"})
                 else:
                     prod_qty = int(request.POST.get('product_qty'))
-                    print("HElo")
                     if product_check.quantity >= prod_qty:
                         Cart.objects.create(user=request.user, product_id=prod_id, product_qty=prod_qty)
                         return JsonResponse({'status':'Product added successfully'})
@@ -231,8 +230,7 @@ def addToCart(request):
             else:
                 return JsonResponse({'status':"No such product found"})
         else:
-            # return JsonResponse({'status':'Login to Continue'})
-            return redirect('login')
+            return JsonResponse({'status':'Login to Continue'})
     return render(request, 'login.html')
 
 def updateCart(request):
@@ -269,3 +267,83 @@ def checkout(request):
 
     context = {'cartItem': cartItem, 'total_price': total_price}
     return render(request, "checkout.html", context)
+
+def placeOrder(request):
+    if request.method == "POST":
+        newOrder = Order()
+        newOrder.user = request.user
+        newOrder.fname = request.POST.get('fname')
+        newOrder.lname = request.POST.get('lname')
+        newOrder.email = request.POST.get('email')
+        newOrder.phone = request.POST.get('phone')
+        newOrder.address = request.POST.get('address')
+        newOrder.city = request.POST.get('city')
+        newOrder.state = request.POST.get('state')
+        newOrder.country = request.POST.get('country')
+        newOrder.pincode = request.POST.get('pincode')
+
+        newOrder.payment_mode = request.POST.get('payment_mode')
+
+        cart = Cart.objects.filter(user=request.user)
+        cart_total_price = 0
+
+        for item in cart:
+            cart_total_price = cart_total_price + item.product.selling_price * item.product_qty
+        
+        newOrder.total_price = cart_total_price
+        trackno = 'gurau'+str(random.randint(1111111, 9999999))
+        while Order.objects.filter(tracking_no=trackno) is None:
+            trackno = 'gurau'+str(random.randint(1111111, 9999999))
+
+        newOrder.tracking_no = trackno
+        newOrder.save()
+
+        newOrderItems = Cart.objects.filter(user=request.user)
+        for item in newOrderItems:
+            OrderItem.objects.create(
+                order = newOrder,
+                product = item.product,
+                price = item.product.selling_price,
+                quantity = item.product_qty
+            )
+
+            orderProduct = Product.objects.filter(id=item.product_id).first()
+            orderProduct.quantity = orderProduct.quantity - item.product_qty
+            orderProduct.save()
+
+        Cart.objects.filter(user=request.user).delete()
+
+        #messages.success(request, "Your order has been placed Successfully")
+        payMode = request.POST.get('payment_mode')
+        if (payMode == "Paid by PayPal"):
+            return JsonResponse({'status':"Your order has been placed successfully"})
+        else:
+            messages.success(request, "Your order has been placed Successfully")
+
+    return redirect('home')
+
+def paypalCheck(request):
+    cart = Cart.objects.filter(user=request.user)
+    total_price = 0
+    for item in cart:
+        total_price = total_price + item.product.selling_price * item.product_qty
+
+    return JsonResponse({
+        'total_price': total_price
+    })
+
+def myOrder(request):
+    orders = Order.objects.filter(user=request.user)
+    context = {'orders': orders}
+    return render(request, "orders.html", context)
+
+def viewOrder(request, t_no):
+    order = Order.objects.filter(tracking_no=t_no).filter(user=request.user).first()
+    orderItems = OrderItem.objects.filter(order=order)
+    context = {'order':order, 'orderitems':orderItems}
+    return render(request, 'vieworders.html', context)
+
+def category(request):
+    products = Product.objects.all()
+    context = {'products': products}
+    return render(request, 'category.html', context)

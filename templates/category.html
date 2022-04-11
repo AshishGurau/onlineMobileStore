@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-3">
+            <div class="card bg-light mb-3">
+                <div class="card-header bg-primary text-white">Brands</div>
+                <ul class="list-group category_block">
+                    <li class="list-group-item"><a href="category.html" class="text-black">Apple</a></li>
+                    <li class="list-group-item"><a href="category.html">OnePlus</a></li>
+                    <li class="list-group-item"><a href="category.html">Samsung</a></li>
+                    <li class="list-group-item"><a href="category.html">Redmi</a></li>
+                    <li class="list-group-item"><a href="category.html">Vivo</a></li>
+                    <li class="list-group-item"><a href="category.html">Oppo</a></li>
+                </ul>
+            </div>
+            <div class="card bg-light mb-3">
+                <div class="card-header bg-success text-white text-uppercase">Filter By Price</div>
+                <ul class="list-group category_block">
+                    <li class="list-group-item"><a href="category.html">Low to High</a></li>
+                    <li class="list-group-item"><a href="category.html">High to Low</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                {% for prod in products %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="border border-white rounded card shadow">
+                        <div class="product product_data font-rale">
+                          <div class="d-flex flex-column">
+                            <a class="mx-auto mt-4" href="{%url 'product-detail' prod.slug%}"><img src="{{prod.get_photo_url}}" alt="pro1" height="200px" width="120px"></a>
+                            <div class="text-center">
+                              <h6 class="mt-2 font-weight-bold">{{prod.name}}</h6>
+                              
+                              <div class="price py-2">
+                                <span>Rs {{prod.selling_price}}</span>
+                              </div>
+                              {% csrf_token %}
+                              <input type="hidden" value="{{prod.id}}" name="p_id" class="prod_id">
+                              <button value="1" type="submit" class="btn btn-primary font-size-12 addToCart qty-input mb-4">Add to Cart<i class="fas fa-shopping-cart"></i></button>
+                              <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-success font-size-12 update-cart mb-4">Whislist<i class="fa fa-heart" aria-hidden="true"></i></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock body %}
+

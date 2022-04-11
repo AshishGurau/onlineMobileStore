@@ -235,11 +235,170 @@
 
     <!--  isotope plugin cdn  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Custom Javascript -->
     <!-- JavaScript -->
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AZ7H5SS6pSDzMNZ7a_ITpDjG4E4RDz4tztyPuic79lnRs-sGyCIcSxh9YRVs6cjNijYKbuI7nXMkohfp&currency=USD"></script>
+    {% comment %} <script>
+      paypal.Buttons({
+        // Sets up the transaction when a payment button is clicked
+        onClick: function(data, actions){
+          var fname = $("[name='fname']").val();
+          var lname = $("[name='lname']").val();
+          var email = $("[name='email']").val();
+          var phone = $("[name='phone']").val();
+          var address = $("[name='address']").val();
+          var city = $("[name='city']").val();
+          var state = $("[name='state']").val();
+          var country = $("[name='country']").val();
+          var pincode = $("[name='pincode']").val();
+          var token = $("[name='csrfmiddlewaretoken']").val();
 
+          if (fname==""||lname==""||email==""||phone==""||address==""||city==""||state==""||country==""||pincode==""){
+            swal("Alert!", "All fields are mandatory!", "error");
+            return false;
+          }else{
+            return true;
+          }
+
+        },
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '{{total_price}}' // Can also reference a variable or function
+              }
+            }]
+          });
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+          return actions.order.capture().then(function(orderData) {
+            // Successful capture! For dev/demo purposes:
+            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+            alert(orderData.id);
+            //const transaction = orderData.purchase_units[0].payments.captures[0];
+           // alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+            // When ready to go live, remove the alert and show a success message within this page. For example:
+            // const element = document.getElementById('paypal-button-container');
+            // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+            // Or go to another URL:  actions.redirect('thank_you.html');
+            data={
+              "fname":fname,
+              "lname": lname,
+              "email": email,
+              "phone": phone,
+              "address": address,
+              "city": city,
+              "state": state,
+              "country": country,
+              "pincode": pincode,
+              "payment_mode": "Paid by PayPal",
+              "payment_id": orderData.id,
+              csrfmiddlewaretoken: token
+            }
+            $.ajax({
+              method: "POST",
+              url: "/placeOrder",
+              data: data,
+              success: function(response){
+                swal("Congratulations", response.status, "success").then((value)=>{
+                  window.location.href = '/my-orders'
+                });
+              }
+            });
+          });
+        }
+      }).render('#paypal-button-container');
+    </script> {% endcomment %}
+    <script>
+      paypal.Buttons({
+        style: {
+          layout: 'vertical',
+          color: 'gold',
+          shape: 'rect',
+        },
+        onClick: function(data, actions){
+          var fname = $("[name='fname']").val();
+          var lname = $("[name='lname']").val();
+          var email = $("[name='email']").val();
+          var phone = $("[name='phone']").val();
+          var address = $("[name='address']").val();
+          var city = $("[name='city']").val();
+          var state = $("[name='state']").val();
+          var country = $("[name='country']").val();
+          var pincode = $("[name='pincode']").val();
+          var token = $("[name='csrfmiddlewaretoken']").val();
+
+          if (fname==""||lname==""||email==""||phone==""||address==""||city==""||state==""||country==""||pincode==""){
+            swal("Alert!", "All fields are mandatory!", "error");
+            return false;
+          }else{
+            return true;
+          }
+        },
+        // Sets up the transaction when a payment button is clicked
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '{{total_price}}' // Can also reference a variable or function
+              }
+            }]
+          });
+        },
+        // Finalize the transaction after payer approval
+        onApprove: (data, actions) => {
+          return actions.order.capture().then(function(orderData) {
+            // Successful capture! For dev/demo purposes:
+            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+            alert(orderData.id)
+            //const transaction = orderData.purchase_units[0].payments.captures[0];
+            //alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+            // When ready to go live, remove the alert and show a success message within this page. For example:
+            // const element = document.getElementById('paypal-button-container');
+            // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+            // Or go to another URL:  actions.redirect('thank_you.html');
+            var fname = $("[name='fname']").val();
+            var lname = $("[name='lname']").val();
+            var email = $("[name='email']").val();
+            var phone = $("[name='phone']").val();
+            var address = $("[name='address']").val();
+            var city = $("[name='city']").val();
+            var state = $("[name='state']").val();
+            var country = $("[name='country']").val();
+            var pincode = $("[name='pincode']").val();
+            var token = $("[name='csrfmiddlewaretoken']").val();
+
+            data={
+              "fname":fname,
+              "lname": lname,
+              "email": email,
+              "phone": phone,
+              "address": address,
+              "city": city,
+              "state": state,
+              "country": country,
+              "pincode": pincode,
+              "payment_mode": "Paid by PayPal",
+              "payment_id": orderData.id,
+              csrfmiddlewaretoken: token
+            }
+            $.ajax({
+              method: "POST",
+              url: "/placeOrder",
+              data: data,
+              success: function(response){
+                swal("Congratulations", response.status, "success").then((value)=>{
+                  window.location.href = '/my-order'
+                });
+              }
+            });
+          });
+        }
+      }).render('#paypal-button-container');
+    </script>
     <script>
       alertify.set('notifier','position', 'top-right');
 

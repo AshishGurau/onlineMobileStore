@@ -40,10 +40,12 @@ $(document).ready(function(){
                 'product_qty': product_qty,
                 csrfmiddlewaretoken: token
             },
-            dataType: "dataType",
+            dataType: "json",
             success: function(response){
                 console.log(response);
                 alertify.success(response.status);
+                
+
             }
         });
     });
@@ -87,7 +89,8 @@ $(document).ready(function(){
             success: function(response){
                 console.log(response);
                 alertify.success(response.status);
-                $('.cartdata').load(location.href + " .cartdata");
+                //$('.cartdata').load(location.href + " .cartdata");
+                location.reload()
             }
         });
     });

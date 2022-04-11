@@ -1,7 +1,53 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block body %}
-<section id="special-price">
+<div class="container">
+  <h4 class="font-rubik font-size-20 mt-5">Search Result:</h4>
+  <hr>
+  <!-- owl carousel -->
+  {% if products %}
+    <!-- <div class="owl-carousel owl-theme"> -->
+  <div class="row">
+    {% for prod in products %}
+    <div class="col-md-3 mb-4">
+      
+
+      <div class="border border-dark rounded shadow">
+        <div class="product product_data font-rale">
+          <div class="d-flex flex-column">
+            <a class="mx-auto mt-4" href="{%url 'product-detail' prod.slug%}"><img src="{{prod.get_photo_url}}" alt="pro1" height="200px" width="120px"></a>
+            <div class="text-center">
+              <h6 class="mt-2 font-weight-bold">{{prod.name}}</h6>
+              
+              <div class="price py-2">
+                <span>Rs {{prod.selling_price}}</span>
+              </div>
+              {% csrf_token %}
+              <input type="hidden" value="{{prod.id}}" class="prod_id">
+              <button value="1" type="submit" class="btn btn-primary font-size-12 addToCart qty-input mb-4">Add to Cart<i class="fas fa-shopping-cart"></i></button>
+              <button data-product={{t.id}} data-action="add" type="submit" class="btn btn-success font-size-12 update-cart mb-4">Whislist<i class="fa fa-heart" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    {% endfor %}
+    {% else %}
+          <p>Your search item not found</p>
+    {% endif %}
+  </div>
+   
+      
+      
+
+      
+    </div>
+    
+  <!-- !owl carousel -->
+</div>
+
+<!-- <section id="special-price">
     <div class="container">
       <h4 class="font-rubik font-size-20 mt-5">Search Result:</h4>
       <br>
@@ -35,5 +81,5 @@
         <p>Your search item not found</p>
         {% endif %}
     </div>
-</section>
+</section>  -->
 {% endblock body %}

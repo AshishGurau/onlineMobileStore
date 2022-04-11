@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+import nacl
 from onlineMobileStore import views
 
 urlpatterns = [
@@ -24,4 +25,11 @@ urlpatterns = [
     path('delete-cart-item', views.deleteCartItem, name='delete-cart-item'),
 
     path('checkout', views.checkout, name="checkout"),
+    path('placeOrder', views.placeOrder, name="placeOrder"),
+    path('proceed-to-pay', views.paypalCheck, name='proceed-to-pay'),
+
+    path('my-order', views.myOrder, name='my-order'),
+    path('view-order/<str:t_no>', views.viewOrder, name='view-order'),
+
+    path('category', views.category, name='category'),
 ]
