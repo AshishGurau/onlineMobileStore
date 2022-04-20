@@ -11,7 +11,15 @@
                 <h2 class="text-uppercase text-center mb-5">Create an account</h2>
   
                 <form action="" method="post">
-                    {% csrf_token %}
+                  {% csrf_token %}
+                  <!-- <div class="form-outline mb-4">
+                      <input type="text" id="fname" class="form-control form-control-lg" name="fname" required />
+                      <label class="form-label" for="username">First Name</label>
+                  </div>
+                  <div class="form-outline mb-4">
+                      <input type="text" id="lname" class="form-control form-control-lg" name="lname" required />
+                      <label class="form-label" for="username">Last Name</label>
+                  </div> -->
                   <div class="form-outline mb-4">
                     <input type="text" id="uname" class="form-control form-control-lg" name="username" required />
                     <label class="form-label" for="username">Username</label>
@@ -21,7 +29,10 @@
                     <input type="email" id="email" name="email" class="form-control form-control-lg" required/>
                     <label class="form-label" for="email">Your Email</label>
                   </div>
-  
+                  <div class="form-outline mb-4">
+                    <input type="text" id="mobile" class="form-control form-control-lg" name="mobile" required />
+                    <label class="form-label" for="username">Mobile No</label>
+                  </div>
                   <div class="form-outline mb-4">
                     <input type="password" id="pass1" name="pass1" class="form-control form-control-lg" required/>
                     <label class="form-label" for="password">Password</label>

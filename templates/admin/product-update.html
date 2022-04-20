@@ -1,0 +1,114 @@
+{% extends 'admin/admin-base.html' %}
+
+{% block content %}
+
+<head>
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    .note {
+      text-align: center;
+      height: 80px;
+      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+      color: #fff;
+      font-weight: bold;
+      line-height: 80px;
+    }
+
+    .form-content {
+      padding: 5%;
+      border: 1px solid #ced4da;
+      margin-bottom: 2%;
+    }
+
+    .form-control {
+      border-radius: 1.5rem;
+    }
+
+    .btnSubmit {
+      border: none;
+      border-radius: 1.5rem;
+      padding: 1%;
+      width: 20%;
+      cursor: pointer;
+      background: #0062cc;
+      color: #fff;
+    }
+
+    .menu {
+      top: 50px;
+    }
+  </style>
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<br><br><br><br><br><br>
+<!------ update page for doctor by admin(sumit)  ---------->
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container register-form">
+    <div class="form">
+      <div class="note">
+        <p>Update Product Details</p>
+      </div>
+      <div class="form-content">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+                <input type="text" name="category" class="form-control" value="{{prodUpdate.category}}" placeholder="Category">
+                <label data-error="wrong" data-success="right" for="orangeForm-name">Category</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="slug" class="form-control" value="{{prodUpdate.slug}}" placeholder="Slug">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Slug</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="name" class="form-control" placeholder="Product Name" value="{{prodUpdate.name}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Product Name</label>
+            </div>
+            <div class="form-group">
+                {% if prodUpdate.image %}
+                    <img src="{{ prodUpdate.get_photo_url}}" alt="image here" width="50" height="33">
+                {% endif %}
+                <input type="file" name="image" class="form-control" placeholder="Image.....">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Image</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="s-des" class="form-control" placeholder="Small Description" value="{{prodUpdate.small_description}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Small Description</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            
+            <div class="form-group">
+                <input type="text" Required name="quantity" class="form-control" placeholder="Quantity" value="{{prodUpdate.quantity}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Quantity</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="o-price" class="form-control" placeholder="Original Price" value="{{prodUpdate.original_price}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Orginal Price</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="s-price" class="form-control" placeholder="Selling Price" value="{{prodUpdate.selling_price}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Selling Price</label>
+            </div>
+            <div class="form-group">
+                <input type="text" Required name="trending" class="form-control" placeholder="Trending" value="{{prodUpdate.trending}}">
+                <label data-error="wrong" data-success="right" for="orangeForm-email">Trending</label>
+            </div>
+
+
+
+          </div>
+        </div>
+        <button type="submit" class="btnSubmit">Update</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock content %}

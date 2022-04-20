@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.contrib import admin
 from django.urls import path
 import nacl
@@ -32,4 +33,15 @@ urlpatterns = [
     path('view-order/<str:t_no>', views.viewOrder, name='view-order'),
 
     path('category', views.category, name='category'),
+
+    #Admin url
+    path('admin-panel', views.adminPanel, name='admin-panel'),
+    path('admin-login', views.adminLogIn, name='admin-login'),
+    path('add-products', views.productsAdd, name='add-products'),
+    path('products', views.products, name='products'),
+    path('purchase-list', views.purchaseList, name="purchase-list"),
+    path('view-customers', views.viewCustomers, name='view-customers'),
+
+    path('update-product/<str:pk>',views.updateProduct, name='update-product'),
+    path('delete-product/<str:pk>',views.deleteProduct, name='delete-product'),
 ]

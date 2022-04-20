@@ -1,3 +1,4 @@
+from email.headerregistry import Group
 import json
 from urllib import request
 from django.shortcuts import render, redirect
@@ -6,11 +7,13 @@ from matplotlib.style import context
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout as logoutUser
+from numpy import cumprod
 from onlineMobileStore.models import *
 from django.core.mail import send_mail
 
 from django.http import JsonResponse
 import random
+from . import models
 
 
 # Create your views here.
@@ -21,11 +24,12 @@ def addProduct(request):
 
 def index(request):
     if request.user.is_authenticated:
+        #customer = models.Customer.objects.get(user_id=request.user.id)
         # customer = request.user.customer
         # order, created = Order.objects.get_or_create(customer=customer, complete=False)
         # items = order.orderitem_set.all()
         # cartItems = order.get_cart_items
-        cartItems = Cart.objects.filter(user=request.user.id).count()
+        cartItems = Cart.objects.filter(user_id=request.user.id).count()
     else:
         # items = []
         # order = {'get_cart_total':0, 'get_cart_items':0}
@@ -54,12 +58,7 @@ def editProduct(request, pk):
     context = {'prod':prod}
     return render(request, 'update.html', context)
 
-def deleteProduct(request, pk):
-    prod = Sale.objects.get(id=pk)
-    
-    prod.delete()
-    
-    return redirect('view')
+
 
 def cart(request):
     # if request.user.is_authenticated:
@@ -71,7 +70,9 @@ def cart(request):
     # else:
     #     items = []
     #     order = {'get_cart_total':0, 'get_cart_items':0}
-    cart = Cart.objects.filter(user=request.user)
+    customer = models.Customer.objects.get(user_id=request.user.id)
+
+    cart = Cart.objects.filter(user_id=customer)
     context = {'cart':cart}
 
     return render(request, 'c.html', context);
@@ -105,6 +106,7 @@ def onSale(request):
 def product(request):
     return render(request, 'product.html');
 
+
 def handleLogin(request):
     if request.method == 'POST':
         loginusername = request.POST["loginemail"]
@@ -127,6 +129,7 @@ def register(request):
         #Get post parameters
         uname = request.POST["username"]
         email = request.POST["email"]
+        mobile = request.POST["mobile"]
         pass1 = request.POST["pass1"]
         repass = request.POST["repass"]
 
@@ -144,9 +147,13 @@ def register(request):
             return redirect('register')
         #create the user
         myUser = User.objects.create_user(uname, email, pass1)
-        myUser.first_name = uname
-        myUser.save()
-
+        customer = Customer()
+        customer.user = myUser
+        customer.uname = uname
+        customer.email = email
+        customer.mobile = mobile
+        customer.save()
+        
         # subject = "Thanks for Register"
         # message = "Hey " + uname + " You are now successfully register with us and your password is secure"
         # to = email
@@ -213,17 +220,19 @@ def productView(request, prod_slug):
 
 def addToCart(request):
     if request.method == "POST":
+        
         if request.user.is_authenticated:
             prod_id = int(request.POST.get('product_id'))
             print(prod_id)
             product_check = Product.objects.get(id=prod_id)
             if(product_check):
-                if(Cart.objects.filter(user=request.user.id, product_id=prod_id)):
+                customer = models.Customer.objects.get(user_id=request.user.id)
+                if(Cart.objects.filter(user=customer, product_id=prod_id)):
                     return JsonResponse({'status':"Product Already in cart"})
                 else:
                     prod_qty = int(request.POST.get('product_qty'))
                     if product_check.quantity >= prod_qty:
-                        Cart.objects.create(user=request.user, product_id=prod_id, product_qty=prod_qty)
+                        Cart.objects.create(user=customer, product_id=prod_id, product_qty=prod_qty)
                         return JsonResponse({'status':'Product added successfully'})
                     else:
                         return JsonResponse({'status':"Only"+str(product_check.quantity)+" quantity availabel"})
@@ -237,9 +246,10 @@ def updateCart(request):
     if request.method == "POST":
         prod_id = int(request.POST.get('product_id'))
         print(prod_id)
-        if(Cart.objects.filter(user=request.user, product_id=prod_id)):
+        customer = models.Customer.objects.get(user_id=request.user.id)
+        if(Cart.objects.filter(user=customer, product_id=prod_id)):
             prod_qty = int(request.POST.get('product_qty'))
-            cart = Cart.objects.get(product_id=prod_id, user=request.user)
+            cart = Cart.objects.get(product_id=prod_id, user=customer)
             cart.product_qty = prod_qty
             cart.save()
             return JsonResponse({'status':"Update Successfully"})
@@ -247,20 +257,22 @@ def updateCart(request):
 
 def deleteCartItem(request):
     if request.method == "POST":
+        customer = models.Customer.objects.get(user_id=request.user.id)
         prod_id = int(request.POST.get('product_id'))
-        if (Cart.objects.filter(user=request.user, product_id=prod_id)):
-            cartItem = Cart.objects.get(product_id=prod_id, user=request.user)
+        if (Cart.objects.filter(user=customer, product_id=prod_id)):
+            cartItem = Cart.objects.get(product_id=prod_id, user=customer)
             cartItem.delete()
         return JsonResponse({'status':"Deleted Successfully"})
     return redirect('home')
 
 def checkout(request):
-    rawCart = Cart.objects.filter(user=request.user)
+    customer = models.Customer.objects.get(user_id=request.user.id)
+    rawCart = Cart.objects.filter(user=customer)
     for item in rawCart:
         if item.product_qty > item.product.quantity:
-            Cart.objects.delete(id=item.id)
+            Cart.objects.filter(id=item.id).delete()
 
-    cartItem = Cart.objects.filter(user=request.user)
+    cartItem = Cart.objects.filter(user=customer)
     total_price = 0
     for item in cartItem:
         total_price = total_price + item.product.selling_price * item.product_qty
@@ -270,6 +282,7 @@ def checkout(request):
 
 def placeOrder(request):
     if request.method == "POST":
+        customer = models.Customer.objects.get(user_id=request.user.id)
         newOrder = Order()
         newOrder.user = request.user
         newOrder.fname = request.POST.get('fname')
@@ -284,7 +297,7 @@ def placeOrder(request):
 
         newOrder.payment_mode = request.POST.get('payment_mode')
 
-        cart = Cart.objects.filter(user=request.user)
+        cart = Cart.objects.filter(user=customer)
         cart_total_price = 0
 
         for item in cart:
@@ -298,7 +311,7 @@ def placeOrder(request):
         newOrder.tracking_no = trackno
         newOrder.save()
 
-        newOrderItems = Cart.objects.filter(user=request.user)
+        newOrderItems = Cart.objects.filter(user=customer)
         for item in newOrderItems:
             OrderItem.objects.create(
                 order = newOrder,
@@ -311,7 +324,7 @@ def placeOrder(request):
             orderProduct.quantity = orderProduct.quantity - item.product_qty
             orderProduct.save()
 
-        Cart.objects.filter(user=request.user).delete()
+        Cart.objects.filter(user=customer).delete()
 
         #messages.success(request, "Your order has been placed Successfully")
         payMode = request.POST.get('payment_mode')
@@ -323,7 +336,8 @@ def placeOrder(request):
     return redirect('home')
 
 def paypalCheck(request):
-    cart = Cart.objects.filter(user=request.user)
+    customer = models.Customer.objects.get(user_id=request.user.id)
+    cart = Cart.objects.filter(user=customer)
     total_price = 0
     for item in cart:
         total_price = total_price + item.product.selling_price * item.product_qty
@@ -347,3 +361,64 @@ def category(request):
     products = Product.objects.all()
     context = {'products': products}
     return render(request, 'category.html', context)
+
+
+############Admin Panel##############
+def adminPanel(request):
+    customerCount = models.Customer.objects.all().count()
+    productCount = models.Product.objects.all().count()
+    orderCount = models.Order.objects.all().count()
+
+    myDict = {
+        'customerCount':customerCount,
+        'productCount':productCount,
+        'orderCount':orderCount,
+    }
+    return render(request, "admin/admin-dashboard.html", context=myDict)
+
+
+def adminLogIn(request):
+    return render(request, "admin/admin-login.html")
+
+def productsAdd(request):
+    return render(request, "admin/add-products.html")
+
+def products(request):
+    products = models.Product.objects.all()
+    return render(request, "admin/products.html", {"products":products})
+
+def purchaseList(request):
+    return render(request, "admin/purchase-list.html")
+
+def viewCustomers(request):
+    customers = models.Customer.objects.all()
+
+    return render(request, "admin/view-customers.html", {"customers":customers})
+
+def updateProduct(request, pk):
+    prodUpdate = Product.objects.get(id=pk)
+
+    if request.method == "POST":
+        prodUpdate.category = request.POST.get('category')
+        prodUpdate.slug = request.POST.get('slug')
+        prodUpdate.name = request.POST.get('name')
+        if len(request.FILES) != 0:
+            prodUpdate.image = request.FILES['image']
+        prodUpdate.small_description = request.POST.get('s-des')
+        prodUpdate.qunatity = request.POST.get('quantity')
+        prodUpdate.original_price = request.POST.get('o-price')
+        prodUpdate.selling_price = request.POST.get('s-price')
+        prodUpdate.trending = request.POST.get('trending')
+        prodUpdate.save()
+        
+        return redirect('product-update')
+
+    context = {'prodUpdate':prodUpdate}
+    return render(request, "admin/product-update.html", context=context)
+
+def deleteProduct(request, pk):
+    prod = Product.objects.get(id=pk)
+    
+    prod.delete()
+    
+    return redirect('products')

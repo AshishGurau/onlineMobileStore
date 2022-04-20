@@ -52,14 +52,22 @@ class Sale(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=200, null=True)
-    email = models.CharField(max_length=200, null=True)
+    uname = models.CharField(max_length=50)
+    mobile = models.CharField(max_length=20, null=False)
+    email = models.CharField(max_length=50)
 
+    # @property
+    # def get_name(self):
+    #     return self.user.first_name+""+self.user.last_name
+    
+    @property
+    def get_id(self):
+        return self.user.id
     def __str__(self):
-        return self.name
+        return self.uname
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('Customer', on_delete=models.CASCADE)
     fname = models.CharField(max_length=150, null=False, blank=False)
     lname = models.CharField(max_length=150, null=False, blank=False)
     email = models.CharField(max_length=150, null=False)
@@ -142,7 +150,7 @@ class Specification(models.Model):
         return self.product.name
 
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('Customer', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_qty = models.IntegerField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
